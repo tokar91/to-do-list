@@ -1,0 +1,8 @@
+
+.cols {
+  display: flex;
+}
+
+.col {
+ border: solid 2px green;
+}
