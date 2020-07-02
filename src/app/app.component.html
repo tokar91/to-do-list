@@ -1,32 +1,20 @@
 <button>Dodaj zadanie</button>
 <button>Dodatkowe opcje</button>
 
-<div class='cols'>
-  <div class='col'>
-    <nav *ngIf='cols===1'>
-      <button>Do zrobienia</button>
-      <button>W toku</button>
-      <button>Gotowe</button>
-    </nav>
-    <span *ngIf='cols!==1'>Do zrobienia</span>
-    <app-task-group [tasks]='this.col1'></app-task-group>
-  </div>
-  <div *ngIf='cols!==1' class='col'>
-    <nav *ngIf='cols===2'>
-      <button>W toku</button>
-      <button>Gotowe</button> 
-      <!-- guziki zmieniaja styl przy zmianie this.pending
-          this.oncoming i this.completed . kazde klikniecie w guzik ustawia
-        tylko jeden na true, reszta false. przy ladowaniu layoutu
-      ma rostrzygac, czy oncoming=== true reszta false, 
-      czy tylko pending === true
-      -->
-    </nav>
-    <span *ngIf='cols===3'>W toku</span>
-    <app-task-group [tasks]='this.col2'></app-task-group>
-  </div>
-  <div *ngIf='cols===3' class='col'>
-    <span>Gotowe</span>
-    <app-task-group [tasks]='this.col3'></app-task-group>
-  </div>
+<nav>
+  <button (click)='showGroup("oncoming")' 
+    [class.active]='active.oncoming'>Do zrobienia</button>
+  <button (click)='showGroup("pending")'
+    [class.active]='active.pending'>W toku</button>
+  <button (click)='showGroup("completed")'
+    [class.active]='active.completed'>Gotowe</button>
+</nav>
+<div class='task-groups'>
+  <app-task-group *ngIf='active.oncoming'  
+      [tasks]='this.oncoming'></app-task-group>
+  <app-task-group *ngIf='active.pending' 
+    [tasks]='this.pending'></app-task-group>
+  <app-task-group *ngIf='active.completed'
+    [tasks]='this.completed'></app-task-group>
 </div>
+
