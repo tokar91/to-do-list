@@ -1,4 +1,4 @@
-<button>Dodaj zadanie</button>
+<button (click)='addTask()'>Dodaj zadanie</button>
 <button>Dodatkowe opcje</button>
 
 <nav>
@@ -17,4 +17,7 @@
   <app-task-group *ngIf='active.completed'
     [tasks]='this.completed'></app-task-group>
 </div>
+
+<app-task *ngIf='data' [data]='data'
+  (close)='data=undefined'></app-task>
 

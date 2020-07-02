@@ -1,1 +1,45 @@
 
+<button class='close' (click)='close.emit()'></button>
+<form>
+  <fieldset [disabled]='mode==="read"'>
+    <label>
+      Nazwa zadania: 
+      <input [value]='task.name'>
+    </label>
+    <label>
+      Status: 
+      <select>
+        <option *ngFor='let value of ["do zrobienia", "w toku", "gotowe"]'
+          [selected]='task.status===value' [value]='value'>
+          {{value}} 
+        </option>
+      </select>
+    </label>
+    <label>
+       Opis: 
+      <textarea name="" id="" cols="80" rows="10">{{task.desc}}</textarea>
+    </label>
+    <label>
+      Termin: 
+      <input type="datetime-local" [value]='task.date'
+      min="2000-01-01T00:00" max="2099-12-31T23:59">
+    </label>
+    <label>
+      Priorytet: 
+      <select>
+        <option *ngFor='let value of ["wysoki", "średni", "niski"]'
+          [selected]='task.prior===value' [value]='value'>
+          {{value}} 
+        </option>
+      </select>
+    </label>
+  </fieldset>
+  <fieldset *ngIf='mode==="read"'>
+    <input type='button' (click)='edit()'>
+    <input type='button' (click)='delete()'>
+  </fieldset>
+  <fieldset *ngIf='mode==="write"'>
+     <input type='button' (click)='cancel()'>
+     <input type='button' (click)='save()'>
+  </fieldset>
+</form>

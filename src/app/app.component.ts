@@ -19,6 +19,9 @@ export class AppComponent implements OnInit {
   oncoming: Task[];
   pending: Task[];
   completed: Task[];
+   
+  openedTask: {[key:string]: string};
+  data: {[key:string]: any}|undefined;
 
   constructor(public tasksService: TasksService){}
 
@@ -83,20 +86,25 @@ export class AppComponent implements OnInit {
             this.active = {oncoming: true, pending: false, completed: true};
       }
   }
+  
+  addTask():void {
+    let date = new Date();
+    let numb = date.getTime();
+    let diff = -date.getTimezoneOffset()*60000;
+    let datestr = new Date(numb+diff).toISOString().slice(0,16);
 
-  /* disposeGroup(status: string, tasks: Task[]): void {
-    switch(status){
-      case 'oncoming':  this.col1 = tasks; 
-                        break;
-      case 'pending' :  if(this.cols===1) {this.col1 = tasks;
-                          console.log('Przypisano tasks do col1');
-                        }
-                        else this.col2 = tasks;
-                        break;
-      case 'completed': if(this.cols===1) this.col1 = tasks;
-                        else if(this.cols===2) this.col2 = tasks;
-                        else this.col3 = tasks;
+    this.openedTask = {
+      name: '',
+      status: 'do zrobienia',
+      desc: '',
+      date: datestr,
+      prior: 'średni'
+    };
+    this.data = {
+      mode: 'write',
+      task: this.openedTask
     }
   }
-  */
+
+
 }
