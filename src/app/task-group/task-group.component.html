@@ -1,32 +1,11 @@
-<table>
-    <tr>
-        <th>naglowek</th>
-        <td>dane</td>
-        <td>dane</td>
+<div>
+  <table>
+    <tr *ngFor='let task of tasks'>
+      <td>{{task.name}}</td>
+      <td>{{task.status}}</td>
+      <td>{{task.desc}}</td>
+      <td>{{task.date}}</td>
+      <td>{{task.prior}}</td>
     </tr>
-    <tr>
-        <th>naglowek</th>
-        <td>dane</td>
-        <td>dane</td>
-    </tr>
-    <tr>
-        <th>naglowek</th>
-        <td>dane</td>
-        <td>dane</td>
-    </tr>
-    <tr>
-        <th>naglowek</th>
-        <td>dane</td>
-        <td>dane</td>
-    </tr>
-    <tr>
-        <th>naglowek</th>
-        <td>dane</td>
-        <td>dane</td>
-    </tr>
-    <tr>
-        <th>naglowek</th>
-        <td>dane</td>
-        <td>dane</td>
-    </tr>
-</table>
+  </table>
+</div>

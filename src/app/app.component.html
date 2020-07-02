@@ -9,7 +9,7 @@
       <button>Gotowe</button>
     </nav>
     <span *ngIf='cols!==1'>Do zrobienia</span>
-    <app-task-group></app-task-group>
+    <app-task-group [tasks]='this.col1'></app-task-group>
   </div>
   <div *ngIf='cols!==1' class='col'>
     <nav *ngIf='cols===2'>
@@ -23,10 +23,10 @@
       -->
     </nav>
     <span *ngIf='cols===3'>W toku</span>
-    <app-task-group></app-task-group>
+    <app-task-group [tasks]='this.col2'></app-task-group>
   </div>
   <div *ngIf='cols===3' class='col'>
     <span>Gotowe</span>
-    <app-task-group></app-task-group>
+    <app-task-group [tasks]='this.col3'></app-task-group>
   </div>
 </div>
