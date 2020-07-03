@@ -19,9 +19,13 @@ export class AppComponent implements OnInit {
   oncoming: Task[];
   pending: Task[];
   completed: Task[];
-   
-  openedTask: {[key:string]: string};
-  data: {[key:string]: any}|undefined;
+  
+  newTask: {[key:string]: string};
+  newTaskCopy: {[key:string]: string};
+  taskToEdit: {[key:string]: string};
+  taskCopy: {[key:string]: string};
+  //openedTask: {[key:string]: string};
+  data: {[key:string]: any};
 
   constructor(public tasksService: TasksService){}
 
@@ -88,23 +92,50 @@ export class AppComponent implements OnInit {
   }
   
   addTask():void {
-    let date = new Date();
-    let numb = date.getTime();
-    let diff = -date.getTimezoneOffset()*60000;
-    let datestr = new Date(numb+diff).toISOString().slice(0,16);
-
-    this.openedTask = {
-      name: '',
-      status: 'do zrobienia',
-      desc: '',
-      date: datestr,
-      prior: 'średni'
-    };
-    this.data = {
-      mode: 'write',
-      task: this.openedTask
+    if(!this.newTask||!this.newTaskCopy){
+      let date = new Date();
+      let numb = date.getTime();
+      let diff = -date.getTimezoneOffset()*60000;
+      let datestr = new Date(numb+diff).toISOString().slice(0,16);
+      this.newTask = {
+        name: '',
+        status: 'do zrobienia',
+        desc: '',
+        date: datestr,
+        prior: 'średni'
+      };
+      this.newTaskCopy = Object.assign({}, this.newTask);
     }
-  }
+    this.data = {mode: 'write', 
+                 task: this.newTask,
+                 copy: this.newTaskCopy};
+  } 
+  
+  openTask(obj:{group:string,index:number}):void {
+   // console.log(obj);
+    let group = obj.group;
+    let index = obj.index;
+    let openedTask: Task = this[group][index]; //lepiej originalTask
+    if(this.taskCopy&&this.taskToEdit&&  //tymczasowe porownywanie
+       this.taskCopy.name===openedTask.name&&
+       this.taskCopy.status===openedTask.status&&
+       this.taskCopy.desc===openedTask.desc&&
+       this.taskCopy.date===openedTask.date&&
+       this.taskCopy.prior===openedTask.prior)
+      this.data = {mode: 'write', 
+                   task: this.taskToEdit,
+                   copy: this.taskCopy};
+    else{
+      this.taskToEdit = Object.assign({},this[group][index]);
+      this.taskCopy = Object.assign({},this[group][index]);
+      // this.taskCopy resetuje edycję w task component
+      // i tymczasowo rozpoznaje edytowany task na liscie
+      // pozniej lepiej zamienic na originalTask
+      this.data = {mode: 'read', 
+                   task: this.taskToEdit,
+                   copy: this.taskCopy};
+    }
 
+  }
 
 }

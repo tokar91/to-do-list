@@ -31,9 +31,9 @@ export class TasksService {
           prior: 'wysoki'
         },
         {
-          name: 'name name',
-          status: 'status status',
-          desc: 'blah blah opis',
+          name: 'zgadnij co',
+          status: 'wysoki',
+          desc: '',
           date: 'data i godzina',
           prior: 'priorytet'
         }

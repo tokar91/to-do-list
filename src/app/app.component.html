@@ -10,14 +10,17 @@
     [class.active]='active.completed'>Gotowe</button>
 </nav>
 <div class='task-groups'>
-  <app-task-group *ngIf='active.oncoming'  
-      [tasks]='this.oncoming'></app-task-group>
+  <app-task-group *ngIf='active.oncoming' 
+      (open)='openTask($event)'
+      [tasks]='this.oncoming' [group]='"oncoming"'></app-task-group>
   <app-task-group *ngIf='active.pending' 
-    [tasks]='this.pending'></app-task-group>
+    (open)='openTask($event)'
+    [tasks]='this.pending' [group]='"pending"'></app-task-group>
   <app-task-group *ngIf='active.completed'
-    [tasks]='this.completed'></app-task-group>
+    (open)='openTask($event)'
+    [tasks]='this.completed' [group]='"completed"'></app-task-group>
 </div>
 
 <app-task *ngIf='data' [data]='data'
-  (close)='data=undefined'></app-task>
+  (close)='this.data=undefined'></app-task>
 

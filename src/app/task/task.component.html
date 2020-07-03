@@ -1,32 +1,38 @@
 
-<button class='close' (click)='close.emit()'></button>
-<form>
-  <fieldset [disabled]='mode==="read"'>
-    <label>
+<button class='close' (click)='closeWin()'></button>
+<form #taskForm='ngForm'>
+  <fieldset [disabled]='mode==="read"' >
+    <label for='name'>
       Nazwa zadania: 
-      <input [value]='task.name'>
+      <input [(ngModel)]='task.name' id='name' name='name' 
+             required>
     </label>
-    <label>
+    <label for='status' >
       Status: 
-      <select>
+      <select [(ngModel)]='task.status' id='status' 
+        name='status'>
         <option *ngFor='let value of ["do zrobienia", "w toku", "gotowe"]'
           [selected]='task.status===value' [value]='value'>
           {{value}} 
         </option>
       </select>
     </label>
-    <label>
+    <label for='desc'>
        Opis: 
-      <textarea name="" id="" cols="80" rows="10">{{task.desc}}</textarea>
+      <textarea [(ngModel)]='task.desc' id="desc" name="desc" 
+        cols="80" rows="10">
+          {{task.desc}}
+      </textarea>
     </label>
-    <label>
+    <label for='date'>
       Termin: 
-      <input type="datetime-local" [value]='task.date'
-      min="2000-01-01T00:00" max="2099-12-31T23:59">
+      <input [(ngModel)]='task.date' id='date' name='date' 
+        type="datetime-local" min="2000-01-01T00:00" 
+        max="2099-12-31T23:59">
     </label>
-    <label>
+    <label for='prior'>
       Priorytet: 
-      <select>
+      <select [(ngModel)]='task.prior' id='prior' name='prior'>
         <option *ngFor='let value of ["wysoki", "średni", "niski"]'
           [selected]='task.prior===value' [value]='value'>
           {{value}} 
