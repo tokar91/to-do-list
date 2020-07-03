@@ -1,51 +1,51 @@
 
-<button class='close' (click)='closeWin()'></button>
+<button class='close' (click)='closeWin()'>&times;</button>
 <form #taskForm='ngForm'>
   <fieldset [disabled]='mode==="read"' >
     <label for='name'>
       Nazwa zadania: 
-      <input [(ngModel)]='task.name' id='name' name='name' 
+      <input [(ngModel)]='task.data.name' id='name' name='name' 
              required>
     </label>
     <label for='status' >
       Status: 
-      <select [(ngModel)]='task.status' id='status' 
+      <select [(ngModel)]='task.data.status' id='status' 
         name='status'>
         <option *ngFor='let value of ["do zrobienia", "w toku", "gotowe"]'
-          [selected]='task.status===value' [value]='value'>
+          [selected]='task.data.status===value' [value]='value'>
           {{value}} 
         </option>
       </select>
     </label>
     <label for='desc'>
        Opis: 
-      <textarea [(ngModel)]='task.desc' id="desc" name="desc" 
+      <textarea [(ngModel)]='task.data.desc' id="desc" name="desc" 
         cols="80" rows="10">
-          {{task.desc}}
+          {{task.data.desc}}
       </textarea>
     </label>
     <label for='date'>
       Termin: 
-      <input [(ngModel)]='task.date' id='date' name='date' 
+      <input [(ngModel)]='task.data.date' id='date' name='date' 
         type="datetime-local" min="2000-01-01T00:00" 
         max="2099-12-31T23:59">
     </label>
     <label for='prior'>
       Priorytet: 
-      <select [(ngModel)]='task.prior' id='prior' name='prior'>
+      <select [(ngModel)]='task.data.prior' id='prior' name='prior'>
         <option *ngFor='let value of ["wysoki", "średni", "niski"]'
-          [selected]='task.prior===value' [value]='value'>
+          [selected]='task.data.prior===value' [value]='value'>
           {{value}} 
         </option>
       </select>
     </label>
   </fieldset>
   <fieldset *ngIf='mode==="read"'>
-    <input type='button' (click)='edit()'>
-    <input type='button' (click)='delete()'>
+    <button type='button' (click)='edit()'>Edytuj</button>
+    <button type='button' (click)='delete()'>Usuń</button>
   </fieldset>
   <fieldset *ngIf='mode==="write"'>
-     <input type='button' (click)='cancel()'>
-     <input type='button' (click)='save()'>
+     <button type='button' (click)='cancel()'>Cofnij zmiany</button>
+     <button type='button' (click)='save()'>Zapisz</button>
   </fieldset>
 </form>

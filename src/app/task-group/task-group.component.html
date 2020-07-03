@@ -1,12 +1,17 @@
 <div>
   <table>
-    <tr *ngFor='let task of tasks; let i = index'
-        (click)='openTask(i)'>
-      <td>{{task.name}}</td>
-      <td>{{task.status}}</td>
-      <td>{{task.desc}}</td>
-      <td>{{task.date}}</td>
-      <td>{{task.prior}}</td>
+    <tr *ngFor='let task of tasks'
+        (click)='openTask(task)'>
+      <td>{{task.data.name}}</td>
+      <td>{{task.data.status}}</td>
+      <td>{{task.data.desc}}</td>
+      <td>{{task.data.date}}</td>
+      <td>{{task.data.prior}}</td>
     </tr>
   </table>
 </div>
+
+<app-task *ngIf='dataToOpen' [data]='dataToOpen'
+  (close)='dataToOpen=undefined' 
+  (saveEditedRef)='saveEditedRef($event)'
+  (deleteEditedRef)='deleteEditedRef($event)'></app-task>

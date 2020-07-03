@@ -16,16 +16,13 @@ export class AppComponent implements OnInit {
     completed: boolean
   };
   groupToHide: 'oncoming'|'completed' = 'oncoming';
-  oncoming: Task[];
-  pending: Task[];
-  completed: Task[];
   
-  newTask: {[key:string]: string};
-  newTaskCopy: {[key:string]: string};
-  taskToEdit: {[key:string]: string};
-  taskCopy: {[key:string]: string};
-  //openedTask: {[key:string]: string};
-  data: {[key:string]: any};
+  editedNewTask: any; // class Task doesnt fit
+  originalNewTask: any; // class Task doesnt fit
+
+  dataToOpen: { mode: 'read'|'write', fromList: boolean, 
+                originalTask: {id: string, data: Task}, 
+                editedTask?: {id: string, data: Task} }
 
   constructor(public tasksService: TasksService){}
 
@@ -52,17 +49,9 @@ export class AppComponent implements OnInit {
       };
     }
 
-    this.tasksService.getTasks('oncoming', 'orderBy', 'dir', 1, 1)
-    .then(tasks=>this.oncoming = tasks);
-
-    this.tasksService.getTasks('pending', 'orderBy', 'dir', 1, 1)
-    .then(tasks=>this.pending= tasks);
-
-    this.tasksService.getTasks('completed', 'orderBy', 'dir', 1, 1)
-    .then(tasks=>this.completed = tasks);
   }
 
-  showGroup(group: string){
+  showGroup(group: string):void{
     if(this.cols===3) return;
     if(!this.active[group])
       switch(group){
@@ -92,50 +81,33 @@ export class AppComponent implements OnInit {
   }
   
   addTask():void {
-    if(!this.newTask||!this.newTaskCopy){
+    if(!this.editedNewTask){
       let date = new Date();
       let numb = date.getTime();
       let diff = -date.getTimezoneOffset()*60000;
       let datestr = new Date(numb+diff).toISOString().slice(0,16);
-      this.newTask = {
-        name: '',
-        status: 'do zrobienia',
-        desc: '',
-        date: datestr,
-        prior: 'średni'
+      this.originalNewTask = {
+        id: new Date().getTime().toString(),
+        data: {name: '',
+               status: 'do zrobienia',
+               desc: '',
+               date: datestr,
+               prior: 'średni'}
       };
-      this.newTaskCopy = Object.assign({}, this.newTask);
+      this.editedNewTask = 
+            {id  : this.originalNewTask.id,
+             data: Object.assign({}, this.originalNewTask.data)};
     }
-    this.data = {mode: 'write', 
-                 task: this.newTask,
-                 copy: this.newTaskCopy};
+    this.dataToOpen = {mode: 'write', 
+                       fromList: false,
+                       originalTask: this.originalNewTask,
+                       editedTask: this.editedNewTask};
   } 
-  
-  openTask(obj:{group:string,index:number}):void {
-   // console.log(obj);
-    let group = obj.group;
-    let index = obj.index;
-    let openedTask: Task = this[group][index]; //lepiej originalTask
-    if(this.taskCopy&&this.taskToEdit&&  //tymczasowe porownywanie
-       this.taskCopy.name===openedTask.name&&
-       this.taskCopy.status===openedTask.status&&
-       this.taskCopy.desc===openedTask.desc&&
-       this.taskCopy.date===openedTask.date&&
-       this.taskCopy.prior===openedTask.prior)
-      this.data = {mode: 'write', 
-                   task: this.taskToEdit,
-                   copy: this.taskCopy};
-    else{
-      this.taskToEdit = Object.assign({},this[group][index]);
-      this.taskCopy = Object.assign({},this[group][index]);
-      // this.taskCopy resetuje edycję w task component
-      // i tymczasowo rozpoznaje edytowany task na liscie
-      // pozniej lepiej zamienic na originalTask
-      this.data = {mode: 'read', 
-                   task: this.taskToEdit,
-                   copy: this.taskCopy};
-    }
 
+  deleteEditedRef():void{
+    this.editedNewTask = undefined;
   }
+  
+
 
 }

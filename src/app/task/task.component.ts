@@ -9,19 +9,25 @@ import { Task } from '../task';
 export class TaskComponent implements OnInit {
   
   mode: 'read'|'write';
-  initialMode: 'read'|'write';
-  task: {[key:string]:string};// type of class Task doesnt fit yet 
-   // - default object for new task possible
-  copy: {[key:string]:string};
-  @Input() set data (data:{[key:string]:any}){
-    this.mode = data.mode;
-    this.initialMode = data.mode;
-    this.task = data.task;
-    this.copy = data.copy;
+  fromList: boolean;
+  originalTask: {id: string, data: Task};
+  editedTask: {id: string, data: Task};
+  task: {id: string, data: Task};
+  @Input() set data (data:{mode: 'read'|'write', fromList: boolean, 
+    originalTask: {id: string, data: Task}, 
+    editedTask?: {id: string, data: Task}}){
+      this.mode = data.mode;
+      this.fromList = data.fromList;
+      if(data.editedTask){
+        this.originalTask = data.originalTask;
+        this.task = data.editedTask;
+      }
+      else this.task = data.originalTask;
   }
   @Output() close: EventEmitter<any> = new EventEmitter();
-  //@Output() copy: EventEmitter<Task> = new EventEmitter();
-  //@Output() edited: EventEmitter<{[key:string]:any}> = new EventEmitter();
+  @Output() saveEditedRef: EventEmitter<{id: string, data: Task}> = 
+              new EventEmitter();
+  @Output() deleteEditedRef: EventEmitter<string|null> = new EventEmitter();
   
 
   constructor() { }
@@ -30,34 +36,42 @@ export class TaskComponent implements OnInit {
   }
   
   closeWin(){
-    //if(this.initialMode==='read') this.edited.emit(this.task)
     this.close.emit();
   }
   
   edit():void{
-   // this.task = <any>Object.assign({},this.task);
-   // this.copy.emit(<any>this.initialTask);
+    this.originalTask = this.task;
+    this.task = {id: this.task.id, 
+                 data: Object.assign({}, this.task.data)};
+    this.saveEditedRef.emit(this.task);
     this.mode = 'write';
   }
+
   delete():void{
-    // POTRZEBUJE ID DOKUMENTU
-   // console.log('nothing...');
+    this.close.emit();
+    // po prostu usunac i odswiezyc tabele getTasks..
+
   }
 
   cancel():void{
-   // if(this.initialMode==='read'){
-   //   this.copy.emit(undefined);
-   //   this.edited.emit(undefined);
-   // }
-    for(let prop in this.task){
-      this.task[prop] = this.copy[prop];
+    for(let prop in this.task.data){
+      this.task.data[prop] = this.originalTask.data[prop];
     }
     
   }
   save():void{
-    this.mode = 'read';
-    // POTRZEBUJE ID DOKUMENTU W FIREBASE PRZY EDYCJI LUB NOWY TWORZE
-   // console.log('mode=read');
+    
+    if(this.fromList){
+      
+       //firebase update 
+    }else {
+     
+    // firebase add
+
+    }
+
+    this.deleteEditedRef.emit(this.fromList?this.task.id:null);
+    this.close.emit();
   }
 
 
