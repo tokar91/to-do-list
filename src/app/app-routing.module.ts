@@ -5,10 +5,11 @@ import { Routes, RouterModule, ExtraOptions } from "@angular/router";
 import { AppComponent } from './app.component';
 
 
+
 const routes:Routes = [
   {path: 'cojest/:orderBy/:dir/:amount', component: AppComponent},
 
-  {path: '**', redirectTo: 'cojest/date&date&date/desc&desc&desc/5', pathMatch: 'full'}
+  {path: '', redirectTo: 'cojest/date&date&date/desc&desc&desc/5', pathMatch: 'full'}
 ]
 
 

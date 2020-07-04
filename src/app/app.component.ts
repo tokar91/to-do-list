@@ -1,9 +1,9 @@
-import { Component, OnInit, AfterViewInit } from '@angular/core';
+import { Component, OnInit, AfterViewInit, HostListener } from '@angular/core';
 import  { Task } from './task';
 import { TaskObj } from './task-obj';
 import { TasksService } from './tasks.service';
-import { ActivatedRoute } from '@angular/router';
-
+import { ActivatedRoute, Router, ActivationEnd } from '@angular/router';
+import  { map, take, filter } from 'rxjs/operators';
 
 
 @Component({
@@ -13,7 +13,8 @@ import { ActivatedRoute } from '@angular/router';
 })
 export class AppComponent implements OnInit, AfterViewInit {
 
-  cols: number = 3;
+  cols: number;
+  customCols: boolean;
   active: {
     oncoming: boolean,
     pending: boolean,
@@ -28,13 +29,62 @@ export class AppComponent implements OnInit, AfterViewInit {
                 originalTask: TaskObj, editedTask?: TaskObj }
 
   params: {[key:string]:any} = {};
+  resizeTimeout: any;
 
   constructor(public tasksService: TasksService,
-              public activatedRoute: ActivatedRoute){}
+              public route: ActivatedRoute,
+              public router: Router
+              ){}
 
   ngOnInit(){
     //  this.tasksService.loglog(); to naprawilo błąd not a function..
 
+    let cols:any = +window.localStorage.getItem('cols');
+    if(cols){
+      this.applyLayout(cols);
+      this.customCols = true;
+    }
+    else this.applyLayout();
+
+
+
+  }
+
+  ngAfterViewInit() {
+    this.route.paramMap.subscribe(
+      (params) => {
+ 
+        console.log(params.keys);
+      }
+    )
+
+    this.router.events.pipe( 
+      filter(event => event instanceof ActivationEnd && 
+              event.snapshot.children.length === 0) )
+    .subscribe((event: ActivationEnd) => { console.log(event.snapshot.data); });
+    
+
+  }
+
+  applyLayout(cols?: number): void {
+
+    if(!cols&&this.customCols) return;
+    if(cols){
+      if(cols > 0){ 
+        this.cols= cols;
+        this.customCols = true;
+        window.localStorage.setItem('cols', cols.toString());
+      }else{
+        this.customCols = false;
+        window.localStorage.removeItem('cols');
+      }
+    }
+    if(!cols||cols<0){
+      let width = window.innerWidth;
+      if(width<500) this.cols = 1;
+      if(width>=500&&width<850) this.cols = 2;
+      if(width>=850) this.cols = 3;
+    }
     switch (this.cols){
       case 1 : this.active = {
           oncoming: true,
@@ -56,15 +106,11 @@ export class AppComponent implements OnInit, AfterViewInit {
     }
   }
 
-  ngAfterViewInit() {
-    this.activatedRoute.params.subscribe(
-      (params) => {
-        this.params.orderBy = '';
-        console.log(params);
-      }
-    )
-    
-  }
+  @HostListener('window:resize',['$event']) onResize($event):void {
+    window.clearTimeout(this.resizeTimeout);
+    this.resizeTimeout = window.setTimeout(()=>this.applyLayout(), 500)
+  } 
+  
 
   showGroup(group: string):void{
     if(this.cols===3) return;

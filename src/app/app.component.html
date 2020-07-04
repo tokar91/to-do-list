@@ -1,5 +1,11 @@
 <button (click)='addTask()'>Dodaj zadanie</button>
-<button>Dodatkowe opcje</button>
+
+<select #selectCols (change)='applyLayout(+selectCols.value)'>
+  <option [value]='-1' [selected]='!customCols' >auto</option>
+  <option [value]='val' [selected]='customCols&&cols===val' 
+          *ngFor='let val of [1,2,3]'>{{val}}</option>
+</select>
+
 
 <nav>
   <button (click)='showGroup("oncoming")' 

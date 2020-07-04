@@ -38,7 +38,7 @@ export class TaskGroupComponent implements OnInit {
   noNextPage: boolean;
 
   constructor(private tasksService: TasksService,
-              public activatedRoute: ActivatedRoute) { }
+              private activatedRoute: ActivatedRoute) { }
 
   ngOnInit() {
     this.tasksService.noPrevPage$.subscribe(
