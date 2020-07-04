@@ -24,7 +24,7 @@ export class TasksService {
   noPrevPage$: Observable<string> = this.noPrevPageIn.asObservable();
   noNextPageIn: Subject<string> = new Subject();
   noNextPage$: Observable<string> = this.noNextPageIn.asObservable();
-
+  
   params: {oncoming:string, pending:string, completed:string} = 
     {oncoming:'', pending:'', completed: ''};
   
@@ -34,6 +34,9 @@ export class TasksService {
     'gotowe'    : 'completed'
   }
 
+  firstValues:any = {};
+  lastValues: any = {};
+
   constructor(private afs: AngularFirestore) { }
 
   //loglog(){
@@ -41,10 +44,12 @@ export class TasksService {
   //}
 
   getTasks(group: string, orderBy?: string, dir?: any, amount?: number, 
-           prevNext?: 'prev'|'next', prevNextValue?: string|number): void {
+   action?: 'prev'|'next'|'update'): void {
 
-    if(orderBy&&dir&&amount)
+    if(orderBy&&dir&&amount){
+      orderBy = orderBy ==='date'?'sortDate':'sortPrior';
       this.params[group] = {orderBy, dir, amount};
+    }
     else if(!this.params[group]) return;
     else {
       let params = this.params[group];
@@ -53,20 +58,28 @@ export class TasksService {
       amount = params.amount;
     }  
     let sortedQuery =
-      this.afs.firestore.collection(group)
-      .orderBy(orderBy==='date'?`data.${orderBy}`:'sortPrior', dir);
+      this.afs.firestore.collection(group).orderBy(orderBy, dir);
 
-    if(prevNext){
-      if(prevNext==='next'){
-        sortedQuery = sortedQuery.startAfter(prevNextValue).limit(amount+1);
-      }
-      if(prevNext==='prev'){
+    let firstValue = this.firstValues[group];  
+    if(action){
+      if(action ==='next'){
         sortedQuery = 
-          sortedQuery.endBefore(prevNextValue).limitToLast(amount+1);
+          sortedQuery.startAfter(this.lastValues[group]).limit(amount+1);
+      }
+      else if(action ==='prev'){
+        sortedQuery = 
+          sortedQuery.endBefore(firstValue).limitToLast(amount+1);
     // get one additional doc to check if further previous page exists
       }
+      else if(action ==='update'){
+        if(firstValue)
+         sortedQuery = sortedQuery.startAt(firstValue).limit(amount+1);
+        else sortedQuery = sortedQuery.limit(amount+1);
+      }
+    }else{
+      if(firstValue) sortedQuery = sortedQuery.startAt(firstValue);
+      sortedQuery = sortedQuery.limit(amount+1);
     }
-    else sortedQuery = sortedQuery.limit(amount+1);
 
     sortedQuery.get().then(
       (snapshot) => {
@@ -74,36 +87,40 @@ export class TasksService {
         if(snapshot.empty){
           console.log('There are no documents');
           taskObjArr = [];
+          this.noPrevPageIn.next(group+'1');
+          this.noNextPageIn.next(group+'1');
           this.sendData(group, taskObjArr);
           return;
         }
-        
-        if(prevNext === 'prev'){
-          if(snapshot.size < amount){
-            this.getTasks(group);
-            console.log('Found less than demanded amount and refreshed');
-            return;
-          } 
-          if(snapshot.size === amount+1){ 
-            taskObjArr = snapshot.docs.slice(1);
-            this.noPrevPageIn.next(group+'0')
-          }else{
-            this.noPrevPageIn.next(group+'1');
+        taskObjArr = snapshot.docs.map(doc=>doc.data());
+        if(action){
+          if(action === 'prev'){
+            if(snapshot.size < amount){
+              this.getTasks(group);
+              console.log('Found less than demanded amount and refreshed');
+              return;
+            } 
+            if(snapshot.size === amount+1){ 
+              taskObjArr = taskObjArr.slice(1);
+              this.noPrevPageIn.next(group+'0');
+            }else{
+              this.noPrevPageIn.next(group+'1');
+            }
+            this.noNextPageIn.next(group+'0');
           }
-          this.noNextPageIn.next(group+'0');
-        }
-        else if(prevNext === 'next'){
-          if(snapshot.size === amount+1){ 
-            taskObjArr = snapshot.docs.slice(0,amount);
-            this.noNextPageIn.next(group+'0')
-          }else{
-            this.noNextPageIn.next(group+'1');
-          } 
-          this.noPrevPageIn.next(group+'0');
+          else {
+            if(snapshot.size === amount+1){ 
+              taskObjArr = taskObjArr.slice(0,amount);
+              this.noNextPageIn.next(group+'0')
+            }else{
+              this.noNextPageIn.next(group+'1');
+            } 
+            if(action === 'next') this.noPrevPageIn.next(group+'0');
+          }
         }
         else {
           if(snapshot.size === amount+1){ 
-            taskObjArr = snapshot.docs.slice(0,amount);
+            taskObjArr = taskObjArr.slice(0,amount);
             this.noPrevPageIn.next(group+'1');
             this.noNextPageIn.next(group+'0');
           }else{
@@ -111,8 +128,10 @@ export class TasksService {
             this.noNextPageIn.next(group+'1');
           }
         }
-        if(!taskObjArr) taskObjArr = snapshot.docs;
-        taskObjArr = taskObjArr.map(doc=>doc.data());
+        if(taskObjArr.length){
+          this.firstValues[group] = taskObjArr[0][orderBy];
+          this.lastValues[group] = taskObjArr[taskObjArr.length-1][orderBy]
+        }
         this.sendData(group, taskObjArr);
     })
   }
@@ -131,18 +150,21 @@ export class TasksService {
     //taskObj.date = +taskObj.id;
     // second prior property allows firebase sorting properly (by priority)
     switch(taskObj.data.prior){
-      case 'wysoki' : taskObj.sortPrior = +('3'+taskObj.id); break;
-      case 'średni' : taskObj.sortPrior = +('2'+taskObj.id); break;
-      default  : taskObj.sortPrior = +('1'+taskObj.id);
+      case 'wysoki' : taskObj.sortPrior = +('3'+taskObj.id.slice(-4));
+                      break;
+      case 'średni' : taskObj.sortPrior = +('2'+taskObj.id.slice(-4)); 
+                      break;
+      default  : taskObj.sortPrior = +('1'+taskObj.id.slice(-4));
     }
+    taskObj.sortDate = taskObj.data.date+taskObj.id.slice(-4);
     this.afs.collection(group).doc(taskObj.id).set(taskObj)
-    .then(()=>{this.getTasks(group)});
+    .then(()=>{this.getTasks(group,'','',undefined,'update')});
   }
 
   deleteTask(status: string, id: string):void {
     let group: string = this.statusToGroup[status];
     this.afs.collection(group).doc(id).delete()
-    .then(()=>{this.getTasks(group)});
+    .then(()=>{this.getTasks(group,'','',undefined,'update')});
   }
 
 }

@@ -44,7 +44,7 @@ export class TaskComponent implements OnInit {
   edit():void{
     this.originalTask = this.task;
     this.task = {id: this.task.id, 
-                 data: Object.assign({}, this.task.data)};
+                 data: {...this.task.data}};
     this.saveEditedRef.emit(this.task);
     this.mode = 'write';
   }
@@ -63,7 +63,8 @@ export class TaskComponent implements OnInit {
   save():void{
     
     this.tasksService.setTask(this.task.data.status, this.task);
-    if(this.task.data.status!==this.originalTask.data.status){
+    if(this.fromList&&
+       this.task.data.status!==this.originalTask.data.status){
       this.tasksService.deleteTask(this.originalTask.data.status, 
         this.task.id);
     }

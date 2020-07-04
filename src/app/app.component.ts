@@ -1,15 +1,18 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, AfterViewInit } from '@angular/core';
 import  { Task } from './task';
 import { TaskObj } from './task-obj';
 import { TasksService } from './tasks.service';
+import { ActivatedRoute } from '@angular/router';
+
+
 
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.css']
 })
-export class AppComponent implements OnInit {
-  
+export class AppComponent implements OnInit, AfterViewInit {
+
   cols: number = 3;
   active: {
     oncoming: boolean,
@@ -24,7 +27,10 @@ export class AppComponent implements OnInit {
   dataToOpen: { mode: 'read'|'write', fromList: boolean, 
                 originalTask: TaskObj, editedTask?: TaskObj }
 
-  constructor(public tasksService: TasksService){}
+  params: {[key:string]:any} = {};
+
+  constructor(public tasksService: TasksService,
+              public activatedRoute: ActivatedRoute){}
 
   ngOnInit(){
     //  this.tasksService.loglog(); to naprawilo błąd not a function..
@@ -48,7 +54,16 @@ export class AppComponent implements OnInit {
         completed: true
       };
     }
+  }
 
+  ngAfterViewInit() {
+    this.activatedRoute.params.subscribe(
+      (params) => {
+        this.params.orderBy = '';
+        console.log(params);
+      }
+    )
+    
   }
 
   showGroup(group: string):void{
