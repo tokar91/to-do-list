@@ -1,5 +1,7 @@
 import { Component, OnInit, Input, Output, EventEmitter} from '@angular/core';
 import { Task } from '../task';
+import { TaskObj } from '../task-obj';
+import { TasksService } from '../tasks.service';
 
 @Component({
   selector: 'app-task',
@@ -10,12 +12,12 @@ export class TaskComponent implements OnInit {
   
   mode: 'read'|'write';
   fromList: boolean;
-  originalTask: {id: string, data: Task};
-  editedTask: {id: string, data: Task};
-  task: {id: string, data: Task};
+  originalTask: TaskObj;
+  editedTask: TaskObj;
+  task: TaskObj;
   @Input() set data (data:{mode: 'read'|'write', fromList: boolean, 
-    originalTask: {id: string, data: Task}, 
-    editedTask?: {id: string, data: Task}}){
+    originalTask: TaskObj, 
+    editedTask?: TaskObj}){
       this.mode = data.mode;
       this.fromList = data.fromList;
       if(data.editedTask){
@@ -25,12 +27,12 @@ export class TaskComponent implements OnInit {
       else this.task = data.originalTask;
   }
   @Output() close: EventEmitter<any> = new EventEmitter();
-  @Output() saveEditedRef: EventEmitter<{id: string, data: Task}> = 
+  @Output() saveEditedRef: EventEmitter<TaskObj> = 
               new EventEmitter();
   @Output() deleteEditedRef: EventEmitter<string|null> = new EventEmitter();
   
 
-  constructor() { }
+  constructor(private tasksService: TasksService) { }
 
   ngOnInit() {
   }
@@ -48,9 +50,8 @@ export class TaskComponent implements OnInit {
   }
 
   delete():void{
+    this.tasksService.deleteTask(this.task.data.status, this.task.id);
     this.close.emit();
-    // po prostu usunac i odswiezyc tabele getTasks..
-
   }
 
   cancel():void{
@@ -61,15 +62,11 @@ export class TaskComponent implements OnInit {
   }
   save():void{
     
-    if(this.fromList){
-      
-       //firebase update 
-    }else {
-     
-    // firebase add
-
+    this.tasksService.setTask(this.task.data.status, this.task);
+    if(this.task.data.status!==this.originalTask.data.status){
+      this.tasksService.deleteTask(this.originalTask.data.status, 
+        this.task.id);
     }
-
     this.deleteEditedRef.emit(this.fromList?this.task.id:null);
     this.close.emit();
   }

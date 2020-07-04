@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import  { Task } from './task';
+import { TaskObj } from './task-obj';
 import { TasksService } from './tasks.service';
 
 @Component({
@@ -9,7 +10,7 @@ import { TasksService } from './tasks.service';
 })
 export class AppComponent implements OnInit {
   
-  cols: number = 2;
+  cols: number = 3;
   active: {
     oncoming: boolean,
     pending: boolean,
@@ -21,8 +22,7 @@ export class AppComponent implements OnInit {
   originalNewTask: any; // class Task doesnt fit
 
   dataToOpen: { mode: 'read'|'write', fromList: boolean, 
-                originalTask: {id: string, data: Task}, 
-                editedTask?: {id: string, data: Task} }
+                originalTask: TaskObj, editedTask?: TaskObj }
 
   constructor(public tasksService: TasksService){}
 

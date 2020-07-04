@@ -9,6 +9,10 @@
       <td>{{task.data.prior}}</td>
     </tr>
   </table>
+  <button type='button' (click)='prev()'
+    [disabled]='noPrevPage'>Poprzednie</button>
+  <button type='button' (click)='next()'
+    [disabled]='noNextPage'>Następne</button>
 </div>
 
 <app-task *ngIf='dataToOpen' [data]='dataToOpen'
