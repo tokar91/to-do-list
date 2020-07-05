@@ -1,21 +1,25 @@
 <div>
   <table>
+    <tr>
+        <th>Nazwa</th>
+        <th (click)='sort("date")'>Termin</th>
+        <th (click)='sort("prior")'>Priorytet</th>
+    </tr>
     <tr *ngFor='let task of tasks'
         (click)='openTask(task)'>
       <td>{{task.data.name}}</td>
-      <td>{{task.data.status}}</td>
-      <td>{{task.data.desc}}</td>
       <td>{{task.data.date}}</td>
       <td>{{task.data.prior}}</td>
     </tr>
   </table>
-  <button type='button' (click)='prev()'
+  <button type='button' (click)='prevNext("prev")'
     [disabled]='noPrevPage'>Poprzednie</button>
-  <button type='button' (click)='next()'
+  <button type='button' (click)='prevNext("next")'
     [disabled]='noNextPage'>Następne</button>
 </div>
 
 <app-task *ngIf='dataToOpen' [data]='dataToOpen'
   (close)='dataToOpen=undefined' 
   (saveEditedRef)='saveEditedRef($event)'
-  (deleteEditedRef)='deleteEditedRef($event)'></app-task>
+  (deleteEditedRef)='deleteEditedRef($event)'>
+</app-task>

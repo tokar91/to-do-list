@@ -1,12 +1,1 @@
 
-.task-groups {
-  display: flex;
-}
-
-app-task-group {
- border: solid 2px green;
-}
-
-.active {
-    background-color: green;
-}

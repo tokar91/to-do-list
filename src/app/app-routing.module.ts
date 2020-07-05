@@ -1,15 +1,15 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Routes, RouterModule, ExtraOptions } from "@angular/router";
+import { Routes, RouterModule } from "@angular/router";
 
-import { AppComponent } from './app.component';
+import { ToDoListComponent } from './to-do-list/to-do-list.component';
 
 
 
 const routes:Routes = [
-  {path: 'cojest/:orderBy/:dir/:amount', component: AppComponent},
+  {path: ':orderBy/:dir/:amount', component: ToDoListComponent},
 
-  {path: '', redirectTo: 'cojest/date&date&date/desc&desc&desc/5', pathMatch: 'full'}
+  {path: '**', redirectTo: '/date&date&date/desc&desc&desc/5', pathMatch: 'full'}
 ]
 
 

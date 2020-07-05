@@ -25,8 +25,8 @@ export class TasksService {
   noNextPageIn: Subject<string> = new Subject();
   noNextPage$: Observable<string> = this.noNextPageIn.asObservable();
   
-  params: {oncoming:string, pending:string, completed:string} = 
-    {oncoming:'', pending:'', completed: ''};
+  params: {oncoming:any, pending:any, completed: any} = 
+      {oncoming: undefined, pending: undefined, completed: undefined};
   
   statusToGroup = {
     'do zrobienia' : 'oncoming',
@@ -45,7 +45,6 @@ export class TasksService {
 
   getTasks(group: string, orderBy?: string, dir?: any, amount?: number, 
    action?: 'prev'|'next'|'update'): void {
-
     if(orderBy&&dir&&amount){
       orderBy = orderBy ==='date'?'sortDate':'sortPrior';
       this.params[group] = {orderBy, dir, amount};
@@ -60,8 +59,8 @@ export class TasksService {
     let sortedQuery =
       this.afs.firestore.collection(group).orderBy(orderBy, dir);
 
-    let firstValue = this.firstValues[group];  
     if(action){
+      let firstValue = this.firstValues[group];
       if(action ==='next'){
         sortedQuery = 
           sortedQuery.startAfter(this.lastValues[group]).limit(amount+1);
@@ -77,7 +76,7 @@ export class TasksService {
         else sortedQuery = sortedQuery.limit(amount+1);
       }
     }else{
-      if(firstValue) sortedQuery = sortedQuery.startAt(firstValue);
+    //  if(firstValue) sortedQuery = sortedQuery.startAt(firstValue); TYLKO NA UPDATE, ZEBY SORTOWANIE DZIALALO
       sortedQuery = sortedQuery.limit(amount+1);
     }
 
@@ -96,6 +95,7 @@ export class TasksService {
         if(action){
           if(action === 'prev'){
             if(snapshot.size < amount){
+              console.log(snapshot.size, orderBy, dir, amount, action);
               this.getTasks(group);
               console.log('Found less than demanded amount and refreshed');
               return;
@@ -156,15 +156,15 @@ export class TasksService {
                       break;
       default  : taskObj.sortPrior = +('1'+taskObj.id.slice(-4));
     }
-    taskObj.sortDate = taskObj.data.date+taskObj.id.slice(-4);
+    taskObj.sortDate = taskObj.data.date? taskObj.data.date+taskObj.id.slice(-4):'';
     this.afs.collection(group).doc(taskObj.id).set(taskObj)
-    .then(()=>{this.getTasks(group,'','',undefined,'update')});
+    .then(()=>{this.getTasks(group,undefined,undefined,undefined,'update')});
   }
 
   deleteTask(status: string, id: string):void {
     let group: string = this.statusToGroup[status];
     this.afs.collection(group).doc(id).delete()
-    .then(()=>{this.getTasks(group,'','',undefined,'update')});
+    .then(()=>{this.getTasks(group,undefined,undefined,undefined,'update')});
   }
 
 }

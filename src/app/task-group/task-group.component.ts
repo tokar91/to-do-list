@@ -14,20 +14,42 @@ import { Router, ActivatedRoute, ParamMap } from '@angular/router';
 export class TaskGroupComponent implements OnInit {
 
   _group: string;
+  _groupIndex: number;
   @Input() set group(group:string){
       if(!this._group){
         switch(group){
           case 'oncoming' : this.tasksService.oncoming$
-                            .subscribe(val=>this.tasks=val);break;
+                            .subscribe(val=>this.tasks=val);
+                            this._groupIndex = 0;
+                            break;
           case 'pending'  : this.tasksService.pending$
-                            .subscribe(val=>this.tasks=val);break;
+                            .subscribe(val=>this.tasks=val);
+                            this._groupIndex = 1;
+                            break;
           case 'completed': this.tasksService.completed$
                             .subscribe(val=>this.tasks=val);
+                            this._groupIndex = 2;
         };
         this._group = group;
       }
   }
-  //@Input params: {orderBy:string, dir: string, amount: number};
+  savedParams: {orderByArr: string[], dirArr: string[], amount:number}
+  @Input() set params(params: {orderByArr: string[], dirArr: string[], amount:number}){
+    let i = this._groupIndex;
+    if(params){
+      if(!this.savedParams||this.savedParams.orderByArr[i]!==params.orderByArr[i]||
+          this.savedParams.dirArr[i]!==params.dirArr[i]||this.savedParams.amount!==params.amount){
+        this.savedParams = params;
+        this.tasksService.getTasks(this._group, params.orderByArr[i], params.dirArr[i], params.amount);
+        if(params.orderByArr[i]==='date'){
+          this.switchDir = params.dirArr[i]==='asc'?'dateAsc':'dateDesc';
+        }else{
+          this.switchDir = params.dirArr[i]==='asc'?'priorAsc':'priorDesc';
+        }
+        console.log(this._group+' just got tasks!'+ params.orderByArr[i], params.dirArr[i], params.amount);
+      }
+    }
+  }
 
   tasks: TaskObj[];
   editedTasks: {[key:string]:TaskObj} = {};
@@ -36,9 +58,12 @@ export class TaskGroupComponent implements OnInit {
    
   noPrevPage: boolean;
   noNextPage: boolean;
+  
+  switchDir: 'dateAsc'|'dateDesc'|'priorAsc'|'priorDesc';
+
 
   constructor(private tasksService: TasksService,
-              private activatedRoute: ActivatedRoute) { }
+              private router: Router) { }
 
   ngOnInit() {
     this.tasksService.noPrevPage$.subscribe(
@@ -49,14 +74,8 @@ export class TaskGroupComponent implements OnInit {
       group => {if(!group.indexOf(this._group)) 
                 this.noNextPage = Boolean(+group.slice(-1));}
     )
-    this.tasksService.getTasks(this._group,'date','asc',5);
-
-    this.activatedRoute.paramMap.subscribe(
-      (params:ParamMap) => {
-        
-        console.log(params.keys);
-      })
   }
+
 
   openTask(task: TaskObj):void {
     if(task.id in this.editedTasks){
@@ -79,17 +98,30 @@ export class TaskGroupComponent implements OnInit {
      delete this.editedTasks[id];
   }
 
-  next():void {
-    if(this.noNextPage) return;
-    this.tasksService.getTasks(this._group,'date','asc',
-      5, 'next');
+  prevNext(side: 'prev'|'next'):void {
+    if(side==='next'&&this.noNextPage) return;
+    if(side==='prev'&&this.noPrevPage) return;
+    let i: number = this._groupIndex;
+    this.tasksService.getTasks(this._group, this.savedParams.orderByArr[i],
+       this.savedParams.dirArr[i], this.savedParams.amount, side);
   }
 
 
-  prev():void{
-    if(this.noPrevPage) return;
-    this.tasksService.getTasks(this._group,'date','asc',
-    5, 'prev');
+  sort(orderBy:string){
+    let dir: string;
+    if(orderBy==='date'){
+      dir = this.switchDir==='dateAsc'? 'desc':'asc';
+    }else{
+      dir = this.switchDir==='priorAsc'? 'desc':'asc';
+    }
+    let i: number = this._groupIndex;
+    let orderByArr: string[] = this.savedParams.orderByArr.slice();
+    let dirArr: string[] = this.savedParams.dirArr.slice();
+    let amount: number = this.savedParams.amount;
+    orderByArr[i] = orderBy;
+    dirArr[i] = dir;
+    let path: string = `/${orderByArr.join('&')}/${dirArr.join('&')}/${amount}`;
+    this.router.navigate([path]);
   }
 
 }

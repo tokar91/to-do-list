@@ -1,9 +1,10 @@
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
-import { FormsModule } from '@angular/forms';
 import { AppComponent } from './app.component';
+import { ToDoListComponent } from './to-do-list/to-do-list.component';
 import { TaskGroupComponent } from './task-group/task-group.component';
 import { TaskComponent } from './task/task.component';
+import { FormsModule } from '@angular/forms';
 import { AppRoutingModule } from './app-routing.module';
 
 import { AngularFireModule } from 'angularfire2';
@@ -23,6 +24,7 @@ var firebaseConfig = {
 @NgModule({
   declarations: [
     AppComponent,
+    ToDoListComponent,
     TaskGroupComponent,
     TaskComponent
   ],
@@ -36,4 +38,5 @@ var firebaseConfig = {
   providers: [],
   bootstrap: [AppComponent]
 })
+
 export class AppModule { }

@@ -28,7 +28,13 @@
       Termin: 
       <input [(ngModel)]='task.data.date' id='date' name='date' 
         type="datetime-local" min="2000-01-01T00:00" 
-        max="2099-12-31T23:59">
+        max="2099-12-31T23:59" *ngIf='!dateOff'>
+      <span *ngIf='dateOff'> brak terminu </span>
+    </label>
+    <label for='dateOff'>
+        Bez terminu 
+        <input [(ngModel)]='dateOff' id='dateOff' name='dateOff' 
+          type='checkbox'>
     </label>
     <label for='prior'>
       Priorytet: 

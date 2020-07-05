@@ -1,0 +1,39 @@
+
+<button (click)='addTask()'>Dodaj zadanie</button>
+
+<label for='cols'>Liczba kolumn
+  <select #selectCols id='cols' (change)='applyLayout(+selectCols.value)'>
+    <option [value]='-1' [selected]='!customCols' >auto</option>
+    <option [value]='val' [selected]='customCols&&cols===val' 
+         *ngFor='let val of [1,2,3]'>{{val}}</option>
+  </select>
+</label>
+<label for='amount'>Liczba wierszy
+  <select #selectAmount id='amount' (change)='changeAmount(selectAmount.value)'>
+    <option [value]='val' [selected]='pathArr[2]===val'
+                *ngFor='let val of [5,10,15,20,25]'>{{val}}</option>
+  </select>
+</label>
+
+
+<nav>
+<button (click)='showGroup("oncoming")' 
+    [class.active]='active.oncoming'>Do zrobienia</button>
+<button (click)='showGroup("pending")'
+    [class.active]='active.pending'>W toku</button>
+<button (click)='showGroup("completed")'
+    [class.active]='active.completed'>Gotowe</button>
+</nav>
+<div class='task-groups'>
+<app-task-group [style.display]='active.oncoming?"block":"none"'
+    [group]='"oncoming"' [params]='params'></app-task-group>
+<app-task-group [style.display]='active.pending?"block":"none"'
+    [group]='"pending"' [params]='params'></app-task-group>
+<app-task-group [style.display]='active.completed?"block":"none"'
+    [group]='"completed"' [params]='params'></app-task-group>
+</div>
+
+<app-task *ngIf='dataToOpen' [data]='dataToOpen'
+(close)='this.dataToOpen=undefined'
+(deleteEditedRef)='deleteEditedRef()'>
+</app-task>

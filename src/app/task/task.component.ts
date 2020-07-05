@@ -11,6 +11,7 @@ import { TasksService } from '../tasks.service';
 export class TaskComponent implements OnInit {
   
   mode: 'read'|'write';
+  dateOff: boolean = false;
   fromList: boolean;
   originalTask: TaskObj;
   editedTask: TaskObj;
@@ -31,7 +32,7 @@ export class TaskComponent implements OnInit {
               new EventEmitter();
   @Output() deleteEditedRef: EventEmitter<string|null> = new EventEmitter();
   
-
+  
   constructor(private tasksService: TasksService) { }
 
   ngOnInit() {
@@ -61,7 +62,7 @@ export class TaskComponent implements OnInit {
     
   }
   save():void{
-    
+    if(this.dateOff) this.task.data.date = '';
     this.tasksService.setTask(this.task.data.status, this.task);
     if(this.fromList&&
        this.task.data.status!==this.originalTask.data.status){
