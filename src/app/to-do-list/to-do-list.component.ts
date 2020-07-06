@@ -10,11 +10,12 @@ import { ActivatedRoute, Router} from '@angular/router';
   styleUrls: ['./to-do-list.component.css']
 })
 
-
 export class ToDoListComponent implements OnInit {
-
+  
   cols: number;
   customCols: boolean;
+  displayedCols: number = -1;
+  amount: number;
   active: {
     oncoming: boolean,
     pending: boolean,
@@ -22,17 +23,15 @@ export class ToDoListComponent implements OnInit {
   };
   groupToHide: 'oncoming'|'completed' = 'oncoming';
   
-  editedNewTask: any; // class Task doesnt fit
-  originalNewTask: any; // class Task doesnt fit
+  editedNewTask: any; 
+  originalNewTask: any;
 
   dataToOpen: { mode: 'read'|'write', fromList: boolean, 
                 originalTask: TaskObj, editedTask?: TaskObj }
 
   params: {[key:string]:any};
   pathArr: string[];
-  //oncomingParams: {[key:string]:any} = {};
-  //pendingParams: {[key:string]:any} = {};
-  //completedParams: {[key:string]:any} = {};
+  secureUrl: boolean = false;
 
   resizeTimeout: any;
 
@@ -42,8 +41,6 @@ export class ToDoListComponent implements OnInit {
               ){}
 
   ngOnInit(){
-    //  this.tasksService.loglog(); to naprawilo błąd not a function..
-
     let cols:any = +window.localStorage.getItem('cols');
     if(cols){
       this.applyLayout(cols);
@@ -53,48 +50,29 @@ export class ToDoListComponent implements OnInit {
 
     this.route.paramMap.subscribe(
       (params) => {
- 
-        console.log(params.keys);
-        this.pathArr = [params.get('orderBy'),params.get('dir'),params.get('amount')];
+        this.pathArr = [params.get('orderBy'),params.get('dir'),params
+        .get('amount')];
         let orderByArr: string[] = this.pathArr[0].split('&');
         let dirArr: string[] = this.pathArr[1].split('&');
         let amount: number = +this.pathArr[2];
         
-        if(orderByArr.every(orderBy=>orderBy==='date'||orderBy==='prior')&&
-           dirArr.every(dir=>dir==='asc'||dir==='desc')&&amount>4&&amount<26){
+        if(this.secureUrl||orderByArr.every(orderBy=>orderBy==='date'||
+          orderBy==='prior')&& dirArr.every(dir=>dir==='asc'||dir==='desc')&&
+          amount>4&&amount<26){
+           this.secureUrl = false;
+           this.amount = amount;
            this.params = {orderByArr, dirArr, amount};
         }else{
           this.router.navigate(['/']);
         }
-
-        
-       
-        /*
-        let oncomingParams = {orderBy: orderBy[0], dir: dir[0], amount};
-        let pendingParams = {orderBy: orderBy[1], dir: dir[1], amount};
-        let completedParams = {orderBy: orderBy[2], dir: dir[2], amount};
-
-        let newParamsArr = [oncomingParams, pendingParams, completedParams];
-        let oldParamsArr = [this.oncomingParams, this.pendingParams, this.completedParams];
-        
-        for(let i=0; i<3; i++){
-          for (let prop in newParamsArr[i]){
-            if(newParamsArr[i][prop]!==oldParamsArr[i][prop]){
-              oldParamsArr[i] = newParamsArr[i];
-              break;
-            } 
-          }
-        }   */
       }
     )
-
   }
 
-
   applyLayout(cols?: number): void {
-    
     if(!cols&&this.customCols) return;
     if(cols){
+      this.displayedCols = cols;
       if(cols > 0){ 
         this.cols= cols;
         this.customCols = true;
@@ -106,9 +84,9 @@ export class ToDoListComponent implements OnInit {
     }
     if(!cols||cols<0){
       let width = window.innerWidth;
-      if(width<500) this.cols = 1;
-      if(width>=500&&width<850) this.cols = 2;
-      if(width>=850) this.cols = 3;
+      if(width<750) this.cols = 1;
+      if(width>=750&&width<1200) this.cols = 2;
+      if(width>=1200) this.cols = 3;
     }
     switch (this.cols){
       case 1 : this.active = {
@@ -136,7 +114,6 @@ export class ToDoListComponent implements OnInit {
     this.resizeTimeout = window.setTimeout(()=>this.applyLayout(), 500)
   } 
   
-
   showGroup(group: string):void{
     if(this.cols===3) return;
     if(!this.active[group])
@@ -197,7 +174,6 @@ export class ToDoListComponent implements OnInit {
   changeAmount(amount:string):void {
     this.router.navigate([`/${this.pathArr[0]}/${this.pathArr[1]}/${amount}`])
   }
-
 
 }
 

@@ -1,36 +1,58 @@
 
-<button (click)='addTask()'>Dodaj zadanie</button>
+<div class='top-bar'>
+  <button mat-stroked-button color='accent' (click)='addTask()' 
+    class='add-button'>
+    Dodaj zadanie
+    <i class="material-icons" aria-hidden="true">
+      add_box
+    </i>
+  </button>
+  <div class='form-field-wrapper'>
+    <mat-form-field  appearance="fill">
+      <mat-label for='cols'>Liczba kolumn</mat-label>
+        <mat-select #selectCols id='cols' [(ngModel)]='displayedCols'
+          (selectionChange)='applyLayout(+selectCols.value)'>
+          <mat-option [value]='-1'  >auto</mat-option>
+          <mat-option [value]='val'  
+              *ngFor='let val of [1,2,3]'>{{val}}</mat-option>
+        </mat-select>
+    </mat-form-field>
+    <mat-form-field  appearance="fill">
+      <mat-label for='amount'>Liczba wierszy</mat-label>
+      <mat-select #selectAmount id='amount' [(ngModel)]='amount'
+        (selectionChange)='changeAmount(selectAmount.value)'>
+        <mat-option [value]='val' 
+            *ngFor='let val of [5,10,15,20,25]'>{{val}}</mat-option>
+      </mat-select>
+    </mat-form-field>
+  </div>
+</div>
 
-<label for='cols'>Liczba kolumn
-  <select #selectCols id='cols' (change)='applyLayout(+selectCols.value)'>
-    <option [value]='-1' [selected]='!customCols' >auto</option>
-    <option [value]='val' [selected]='customCols&&cols===val' 
-         *ngFor='let val of [1,2,3]'>{{val}}</option>
-  </select>
-</label>
-<label for='amount'>Liczba wierszy
-  <select #selectAmount id='amount' (change)='changeAmount(selectAmount.value)'>
-    <option [value]='val' [selected]='pathArr[2]===val'
-                *ngFor='let val of [5,10,15,20,25]'>{{val}}</option>
-  </select>
-</label>
+<div class='navButtons'>
+  <button mat-stroked-button color='primary' class='oncomingBtn'
+    (click)='showGroup("oncoming")' [class.active]='active.oncoming'>
+    Do zrobienia
+  </button>
+  <button mat-stroked-button color='primary' class='pendingBtn'
+     (click)='showGroup("pending")' [class.active]='active.pending'>
+     W toku
+  </button>
+  <button mat-stroked-button color='basic' class='completedBtn'
+    (click)='showGroup("completed")' [class.active]='active.completed'>
+    Gotowe
+  </button>
+</div>
 
-
-<nav>
-<button (click)='showGroup("oncoming")' 
-    [class.active]='active.oncoming'>Do zrobienia</button>
-<button (click)='showGroup("pending")'
-    [class.active]='active.pending'>W toku</button>
-<button (click)='showGroup("completed")'
-    [class.active]='active.completed'>Gotowe</button>
-</nav>
-<div class='task-groups'>
-<app-task-group [style.display]='active.oncoming?"block":"none"'
-    [group]='"oncoming"' [params]='params'></app-task-group>
-<app-task-group [style.display]='active.pending?"block":"none"'
-    [group]='"pending"' [params]='params'></app-task-group>
-<app-task-group [style.display]='active.completed?"block":"none"'
-    [group]='"completed"' [params]='params'></app-task-group>
+<div cdkDropListGroup class='task-groups'>
+  <app-task-group [style.display]='active.oncoming?"block":"none"'
+      [group]='"oncoming"' [params]='params' (secureUrl)='secureUrl=true'>
+  </app-task-group>
+  <app-task-group [style.display]='active.pending?"block":"none"'
+      [group]='"pending"' [params]='params' (secureUrl)='secureUrl=true'>
+    </app-task-group>
+  <app-task-group [style.display]='active.completed?"block":"none"'
+      [group]='"completed"' [params]='params' (secureUrl)='secureUrl=true'>
+  </app-task-group>
 </div>
 
 <app-task *ngIf='dataToOpen' [data]='dataToOpen'

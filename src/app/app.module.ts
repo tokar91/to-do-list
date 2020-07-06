@@ -1,4 +1,11 @@
 import { BrowserModule } from '@angular/platform-browser';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import {MatRippleModule, MatCheckboxModule, MatInputModule}
+  from '@angular/material';
+import {MatButtonModule} from '@angular/material/button'; 
+import {MatSelectModule} from '@angular/material/select'; 
+import {MatFormFieldModule} from '@angular/material/form-field';
+import {DragDropModule} from '@angular/cdk/drag-drop';
 import { NgModule } from '@angular/core';
 import { AppComponent } from './app.component';
 import { ToDoListComponent } from './to-do-list/to-do-list.component';
@@ -30,6 +37,10 @@ var firebaseConfig = {
   ],
   imports: [
     BrowserModule,
+    BrowserAnimationsModule,
+    MatRippleModule, MatCheckboxModule, MatInputModule,
+    MatButtonModule,MatSelectModule,MatFormFieldModule,
+    DragDropModule,
     AngularFireModule.initializeApp(firebaseConfig),
     AngularFirestoreModule,
     AppRoutingModule,

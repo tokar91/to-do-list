@@ -1,8 +1,111 @@
-div {
-    width: 300px;
-    height: 400px;
+
+.container {
+  position: relative;
+  height: 100%;
+}
+table {
+  display: block; 
+  overflow-y: auto;
+  padding-bottom: 50px;
+  height: calc(100vh - 140px);
+  margin: 0 5px;
+  border-right: solid 3px rgba(0,0,0,0.35);
+}
+table::-webkit-scrollbar {
+  width: 10px;
+  background-color: rgba(0,0,0,0.13);
+}
+table::-webkit-scrollbar-thumb {
+  background-color: rgba(0,0,0,0.25);
+}
+
+tr {
+  display: flex;
+  margin: 5px;
+}
+tr:nth-child(n+2){
+  cursor: pointer;
+}
+tr:nth-child(n+2):hover{
+    background-color: rgb(150, 200, 255);
 }
 
 th, td {
-    padding: 10px;
+    padding: 6px;
+    font-size: 14px;
+}
+td {
+  word-break: break-word;
+}
+th:first-child, td:first-child {
+  flex-basis: 50%;
+  flex-grow: 2.5;
+}
+th:first-child {
+  vertical-align: center;
+  font-size: 16px;
+  text-align: center;
+  color: #222
+
+}
+th:nth-child(2), td:nth-child(2){
+  flex-basis: 25%;
+  flex-grow: 1.5;
+  text-align: center;
+}
+th:nth-child(3), td:nth-child(3){
+  flex-basis: 25%;
+  flex-grow: 1;
+  text-align: center;
+}
+
+
+.sortBtn {
+  opacity: 0.4;
+  transition: transform 0.8s;
+  height:20px !important;
+  line-height: 20px !important;
+}
+
+
+.dateAsc, .dateDesc, .priorAsc, .priorDesc {
+   opacity: 1;
+   background-color: rgb(150, 200, 255);
+}
+.dateAsc {
+  transform: rotateX(180deg);
+}
+.priorAsc {
+  transform: rotateX(180deg);
+}
+
+.highPrior {
+  color: tomato;
+}
+.lowPrior {
+  color: #AAA;
+}
+
+
+.buttons {
+    position: absolute;
+    left: 25px;
+    right: 25px;
+    bottom: 4px;
+}
+.buttons button {
+  background-color: white;
+}
+.buttons button:last-of-type {
+    float: right;
+}
+
+
+app-task {
+  position: fixed;
+  z-index: 3;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
 }

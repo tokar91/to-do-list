@@ -1,11 +1,85 @@
-.task-groups {
+* {
+    box-sizing: border-box;
+}
+
+.top-bar { 
+  height: 60px;
+  margin: 3px;
+}
+.top-bar .add-button {
+   font-size: 25px;
+   height: 100%;
+   width: 250px;
+   max-width: 40%;
+}
+@media screen and (max-width:600px){
+    .top-bar .add-button {
+        font-size: 15px;
+    }
+}
+@media screen and (max-width:450px){
+    .top-bar .add-button {
+        font-size: 12px;
+    }
+}
+.top-bar .form-field-wrapper {
+    float: right;
+    height: 100%;
+    width: 250px;
+    max-width: 40%;
+}
+.top-bar mat-form-field {
+    width: 50%;
+}
+
+
+.navButtons {
     display: flex;
+    height: 40px;
+    margin-top: 10px;
+}
+.navButtons>button {
+    flex-grow: 1;
+    flex-basis: 80px;
+    margin: 3px;
+    outline: none;
+    user-select: none;
+    cursor: pointer;
+}
+.oncomingBtn {
+    color: rgb(165, 0, 190);
+    font-weight: bold;
+}
+.pendingBtn {
+    color: rgb(0, 80, 220);
+    font-weight: bold;
+}
+.completedBtn {
+    color: green;
+}
+.navButtons>.active {
+    background-color: rgb(150, 200, 255);
+    pointer-events: none;
+}
+
+
+.task-groups {
+   overflow-x: auto;
+   display: flex;
+}
+.task-groups::-webkit-scrollbar {
+    background-color: rgba(0,0,0,0.12);
+    width: 8px;
+}
+.task-groups::-webkit-scrollbar-thumb {
+    background-color: rgba(0,0,0,0.25);
+    border-radius: 2px;
 }
 
 app-task-group {
-    border: solid 2px green;
+    flex-basis: 300px;
+    flex-shrink: 0;
+    flex-grow: 1;
 }
 
-.active {
-    background-color: green;
-}
+

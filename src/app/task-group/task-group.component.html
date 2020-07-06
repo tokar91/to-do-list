@@ -1,25 +1,69 @@
-<div>
-  <table>
+<div class='container'>
+  <table cdkDropList [cdkDropListData]='this.tasks' 
+    (cdkDropListDropped)="drop($event)" 
+    [style.color]='_groupIndex===1?"rgb(165, 0, 190)":
+     _groupIndex===2?"rgb(0, 80, 220)":"green"'>
     <tr>
-        <th>Nazwa</th>
-        <th (click)='sort("date")'>Termin</th>
-        <th (click)='sort("prior")'>Priorytet</th>
+      <th>
+        Nazwa
+      </th>
+      <th>
+        <button mat-stroked-button color='basic' (click)='sort("date")' 
+        class='sortBtn' [class.dateAsc]='switchDir==="dateAsc"'
+        [class.dateDesc]='switchDir==="dateDesc"'>
+          <svg xmlns="http://www.w3.org/2000/svg" height="16"
+          viewBox="0 0 24 24" width="16" >
+              <path d="M0 0h24v24H0V0z" fill="none"/>
+              <path d="M20 12l-1.41-1.41L13 16.17V4h-2v12.17l-5.58-5.59L4
+              12l8 8 8-8z"/>
+          </svg>
+        </button>
+      </th>
+      <th>
+        <button mat-stroked-button color='basic' (click)='sort("prior")' 
+        class='sortBtn' [class.priorAsc]='switchDir==="priorAsc"'
+          [class.priorDesc]='switchDir==="priorDesc"'>
+          <svg xmlns="http://www.w3.org/2000/svg" height="16"
+          viewBox="0 0 24 24" width="16" >
+              <path d="M0 0h24v24H0V0z" fill="none"/>
+              <path d="M20 12l-1.41-1.41L13 16.17V4h-2v12.17l-5.58-5.59L4
+              12l8 8 8-8z"/>
+          </svg>
+        </button>
+      </th>
     </tr>
     <tr *ngFor='let task of tasks'
-        (click)='openTask(task)'>
+        (click)='openTask(task)' cdkDrag>
       <td>{{task.data.name}}</td>
-      <td>{{task.data.date}}</td>
-      <td>{{task.data.prior}}</td>
+      <td>{{task.data.date?task.data.date.replace('T', ' '):'brak daty'}}</td>
+      <td [class.highPrior]='task.data.prior==="wysoki"'
+      [class.lowPrior]='task.data.prior==="niski"'>
+      {{task.data.prior==='wysoki'?'W':
+        task.data.prior==='średni'?'Ś':'N'}}</td>
     </tr>
   </table>
-  <button type='button' (click)='prevNext("prev")'
-    [disabled]='noPrevPage'>Poprzednie</button>
-  <button type='button' (click)='prevNext("next")'
-    [disabled]='noNextPage'>Następne</button>
+
+  <div class='buttons'>
+    <button mat-stroked-button type='button'
+      (click)='prevNext("prev")' [disabled]='noPrevPage'>
+      <i class="material-icons" aria-hidden="true">
+       keyboard_arrow_left
+      </i>
+    </button>
+    <button mat-stroked-button type='button'
+      (click)='prevNext("next")' [disabled]='noNextPage'>
+      <i class="material-icons" aria-hidden="true">
+       keyboard_arrow_right
+      </i>
+    </button>
+  </div> 
+
+
+  <app-task *ngIf='dataToOpen' [data]='dataToOpen'
+    (close)='dataToOpen=undefined' 
+    (saveEditedRef)='saveEditedRef($event)'
+    (deleteEditedRef)='deleteEditedRef($event)'>
+  </app-task>
+
 </div>
 
-<app-task *ngIf='dataToOpen' [data]='dataToOpen'
-  (close)='dataToOpen=undefined' 
-  (saveEditedRef)='saveEditedRef($event)'
-  (deleteEditedRef)='deleteEditedRef($event)'>
-</app-task>

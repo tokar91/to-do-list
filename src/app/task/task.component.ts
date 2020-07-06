@@ -1,5 +1,4 @@
 import { Component, OnInit, Input, Output, EventEmitter} from '@angular/core';
-import { Task } from '../task';
 import { TaskObj } from '../task-obj';
 import { TasksService } from '../tasks.service';
 
@@ -11,7 +10,7 @@ import { TasksService } from '../tasks.service';
 export class TaskComponent implements OnInit {
   
   mode: 'read'|'write';
-  dateOff: boolean = false;
+  dateOff: boolean = true;
   fromList: boolean;
   originalTask: TaskObj;
   editedTask: TaskObj;
@@ -21,6 +20,7 @@ export class TaskComponent implements OnInit {
     editedTask?: TaskObj}){
       this.mode = data.mode;
       this.fromList = data.fromList;
+      if(this.fromList) this.dateOff = false;
       if(data.editedTask){
         this.originalTask = data.originalTask;
         this.task = data.editedTask;
@@ -56,13 +56,18 @@ export class TaskComponent implements OnInit {
   }
 
   cancel():void{
+    if(this.fromList&&this.originalTask.data.date) this.dateOff = false;
+    if(this.fromList&&!this.originalTask.data.date||
+       !this.fromList) this.dateOff = true;
     for(let prop in this.task.data){
       this.task.data[prop] = this.originalTask.data[prop];
+      
     }
     
   }
   save():void{
     if(this.dateOff) this.task.data.date = '';
+    if(!this.task.data.name.trim()) return;
     this.tasksService.setTask(this.task.data.status, this.task);
     if(this.fromList&&
        this.task.data.status!==this.originalTask.data.status){

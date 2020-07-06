@@ -156,15 +156,30 @@ export class TasksService {
                       break;
       default  : taskObj.sortPrior = +('1'+taskObj.id.slice(-4));
     }
-    taskObj.sortDate = taskObj.data.date? taskObj.data.date+taskObj.id.slice(-4):'';
+    // to prevent overlook any task on sort result add postfix of 4 random digits
+    taskObj.sortDate = taskObj.data.date? 
+                      taskObj.data.date+taskObj.id.slice(-4):
+                      Math.random().toFixed(10);
     this.afs.collection(group).doc(taskObj.id).set(taskObj)
-    .then(()=>{this.getTasks(group,undefined,undefined,undefined,'update')});
+    .then(()=>{this.getTasks(group)});
   }
 
   deleteTask(status: string, id: string):void {
     let group: string = this.statusToGroup[status];
     this.afs.collection(group).doc(id).delete()
     .then(()=>{this.getTasks(group,undefined,undefined,undefined,'update')});
+  }
+
+  transferTask(group: string, taskObj: TaskObj): void{
+    let oldStatus: string = taskObj.data.status;
+    switch(group){
+      case 'oncoming'  : taskObj.data.status = 'do zrobienia'; break;
+      case 'pending'  : taskObj.data.status = 'w toku'; break;
+      default : taskObj.data.status = 'gotowe';
+    }
+    this.afs.collection(group).doc(taskObj.id).set(taskObj)
+    .then(()=>{this.getTasks(group)});
+    this.deleteTask(oldStatus, taskObj.id);
   }
 
 }

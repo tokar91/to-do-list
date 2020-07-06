@@ -1,8 +1,66 @@
 
-label {
-    display: block;
+.background {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background-color: rgba(0,0,0,0.4);
+    -webkit-backdrop-filter: blur(3px);
+    backdrop-filter: blur(3px);
+    overflow: auto;
+}  
+.background::-webkit-scrollbar {
+  visibility: hidden;
+}
+.container {
+    position: absolute;
+    top: 10%;
+    left: 50%;
+    margin-bottom: 300px;
+    transform: translate(-50%);
+    box-sizing: border-box;
+    width: 400px;
+    max-width: 90%;
+}
+
+.close {
+    float: right;
+    margin-bottom: 5px;
+    cursor: pointer;
+    outline: none;
+}
+form {
+    clear: right;
+    background-color: white;
+    border-radius: 4px;
 }
 
 textarea {
     resize: none;
 }
+
+.save, .delete {
+    float: right;
+} 
+
+fieldset {
+    border: none;
+}
+mat-form-field, mat-checkbox {
+    width: 40%;
+}
+fieldset.name-and-desc>* {
+   width: 100%;
+}
+fieldset.date-and-dateOff .date {
+    width: 60%;
+}
+fieldset.date-and-dateOff>*, fieldset.status-and-prior>* {
+   height: 40px;
+}
+fieldset .date, fieldset .prior {
+   float: right;
+}
+
+

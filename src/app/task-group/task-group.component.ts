@@ -1,9 +1,9 @@
 import { Component, OnInit, Input, Output, EventEmitter} 
   from '@angular/core';
-import { Task } from '../task';
 import { TaskObj } from '../task-obj';
 import { TasksService } from '../tasks.service';
-import { Router, ActivatedRoute, ParamMap } from '@angular/router';
+import { Router } from '@angular/router';
+import {CdkDragDrop} from '@angular/cdk/drag-drop';
 
 
 @Component({
@@ -34,23 +34,24 @@ export class TaskGroupComponent implements OnInit {
       }
   }
   savedParams: {orderByArr: string[], dirArr: string[], amount:number}
-  @Input() set params(params: {orderByArr: string[], dirArr: string[], amount:number}){
+  @Input() set params(params: {orderByArr: string[], dirArr: string[],
+     amount:number}){
     let i = this._groupIndex;
     if(params){
       if(!this.savedParams||this.savedParams.orderByArr[i]!==params.orderByArr[i]||
-          this.savedParams.dirArr[i]!==params.dirArr[i]||this.savedParams.amount!==params.amount){
+          this.savedParams.dirArr[i]!==params.dirArr[i]||this.savedParams.amount!==
+          params.amount){
         this.savedParams = params;
-        this.tasksService.getTasks(this._group, params.orderByArr[i], params.dirArr[i], params.amount);
+        this.tasksService.getTasks(this._group, params.orderByArr[i], 
+          params.dirArr[i], params.amount);
         if(params.orderByArr[i]==='date'){
           this.switchDir = params.dirArr[i]==='asc'?'dateAsc':'dateDesc';
         }else{
           this.switchDir = params.dirArr[i]==='asc'?'priorAsc':'priorDesc';
         }
-        console.log(this._group+' just got tasks!'+ params.orderByArr[i], params.dirArr[i], params.amount);
       }
     }
   }
-
   tasks: TaskObj[];
   editedTasks: {[key:string]:TaskObj} = {};
   dataToOpen: {mode: 'read'|'write', fromList: boolean, 
@@ -61,6 +62,7 @@ export class TaskGroupComponent implements OnInit {
   
   switchDir: 'dateAsc'|'dateDesc'|'priorAsc'|'priorDesc';
 
+  @Output() secureUrl: EventEmitter<any> = new EventEmitter();
 
   constructor(private tasksService: TasksService,
               private router: Router) { }
@@ -75,7 +77,6 @@ export class TaskGroupComponent implements OnInit {
                 this.noNextPage = Boolean(+group.slice(-1));}
     )
   }
-
 
   openTask(task: TaskObj):void {
     if(task.id in this.editedTasks){
@@ -106,13 +107,16 @@ export class TaskGroupComponent implements OnInit {
        this.savedParams.dirArr[i], this.savedParams.amount, side);
   }
 
-
   sort(orderBy:string){
     let dir: string;
-    if(orderBy==='date'){
-      dir = this.switchDir==='dateAsc'? 'desc':'asc';
+    if(this.switchDir.indexOf(orderBy)+1){
+      if(orderBy==='date'){
+        dir = this.switchDir==='dateAsc'? 'desc':'asc';
+      }else{
+        dir = this.switchDir==='priorAsc'? 'desc':'asc';
+      }
     }else{
-      dir = this.switchDir==='priorAsc'? 'desc':'asc';
+      dir = 'desc';
     }
     let i: number = this._groupIndex;
     let orderByArr: string[] = this.savedParams.orderByArr.slice();
@@ -121,7 +125,16 @@ export class TaskGroupComponent implements OnInit {
     orderByArr[i] = orderBy;
     dirArr[i] = dir;
     let path: string = `/${orderByArr.join('&')}/${dirArr.join('&')}/${amount}`;
+    this.secureUrl.emit();
     this.router.navigate([path]);
+  }
+
+  drop(event: CdkDragDrop<string[]>) {
+    if (event.previousContainer === event.container) {
+      return;
+    }
+    let taskObj: any = event.previousContainer.data[event.previousIndex]
+    this.tasksService.transferTask(this._group, taskObj);
   }
 
 }
