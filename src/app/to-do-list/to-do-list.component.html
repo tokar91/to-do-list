@@ -9,7 +9,7 @@
   </button>
   <div class='form-field-wrapper'>
     <mat-form-field  appearance="fill">
-      <mat-label for='cols'>Liczba kolumn</mat-label>
+      <mat-label for='cols'>Kolumny</mat-label>
         <mat-select #selectCols id='cols' [(ngModel)]='displayedCols'
           (selectionChange)='applyLayout(+selectCols.value)'>
           <mat-option [value]='-1'  >auto</mat-option>
@@ -18,7 +18,7 @@
         </mat-select>
     </mat-form-field>
     <mat-form-field  appearance="fill">
-      <mat-label for='amount'>Liczba wierszy</mat-label>
+      <mat-label for='amount'>Wiersze</mat-label>
       <mat-select #selectAmount id='amount' [(ngModel)]='amount'
         (selectionChange)='changeAmount(selectAmount.value)'>
         <mat-option [value]='val' 

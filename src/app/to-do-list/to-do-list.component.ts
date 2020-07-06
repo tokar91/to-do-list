@@ -146,10 +146,16 @@ export class ToDoListComponent implements OnInit {
   addTask():void {
     if(!this.editedNewTask){
       let date = new Date();
-      let numb = date.getTime();
-      let diff = -date.getTimezoneOffset()*60000;
-      let datestr = new Date(numb+diff).toISOString().slice(0,16);
-      this.originalNewTask = {
+   //   let numb = date.getTime();
+   //   let diff = -date.getTimezoneOffset()*60000;
+   //   let datestr = new Date(numb+diff).toISOString().slice(0,16);
+    /*  below is result, which looks better, because of rounded hour  */
+     let m: number = date.getMonth()+1;
+     let d: number = date.getDate();
+     let datestr = 
+       [date.getFullYear(), m>9?m:'0'+m,d>9?d:'0'+d].join('-')+'T12:00';
+
+     this.originalNewTask = {
         id: new Date().getTime().toString(),
         data: {name: '',
                status: 'do zrobienia',

@@ -44,6 +44,7 @@ export class TaskComponent implements OnInit {
   
   edit():void{
     this.originalTask = this.task;
+    if(!this.task.data.date) this.dateOff = true;
     this.task = {id: this.task.id, 
                  data: {...this.task.data}};
     this.saveEditedRef.emit(this.task);

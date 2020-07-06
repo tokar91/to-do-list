@@ -22,6 +22,7 @@
     box-sizing: border-box;
     width: 400px;
     max-width: 90%;
+    
 }
 
 .close {
@@ -30,29 +31,51 @@
     cursor: pointer;
     outline: none;
 }
+
 form {
     clear: right;
     background-color: white;
     border-radius: 4px;
+    padding-top: 5px;
 }
-
-textarea {
-    resize: none;
-}
-
-.save, .delete {
-    float: right;
-} 
-
 fieldset {
     border: none;
 }
+fieldset.date-and-dateOff {
+    margin-top: -15px;
+}
+fieldset.status-and-prior {
+    margin-top: 6px;
+}
+
+
+fieldset:disabled label {
+    color: #555;
+}
+textarea {
+    resize: none;
+}
+fieldset:disabled input, fieldset:disabled textarea {
+    color: #333;
+}
+textarea::-webkit-scrollbar {
+    width: 8px;
+}
+textarea::-webkit-scrollbar-thumb {
+    background-color: #AAA;
+    border-radius: 2px;
+}
+
 mat-form-field, mat-checkbox {
     width: 40%;
+}
+fieldset.date-and-dateOff mat-checkbox {
+    color: #222;
 }
 fieldset.name-and-desc>* {
    width: 100%;
 }
+
 fieldset.date-and-dateOff .date {
     width: 60%;
 }
@@ -62,5 +85,9 @@ fieldset.date-and-dateOff>*, fieldset.status-and-prior>* {
 fieldset .date, fieldset .prior {
    float: right;
 }
+
+.save, .delete {
+    float: right;
+} 
 
 

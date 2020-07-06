@@ -45,7 +45,7 @@ th:first-child {
   vertical-align: center;
   font-size: 16px;
   text-align: center;
-  color: #222
+  color: #555
 
 }
 th:nth-child(2), td:nth-child(2){
