@@ -1,8 +1,8 @@
 <div class='container'>
   <table cdkDropList [cdkDropListData]='this.tasks' 
     (cdkDropListDropped)="drop($event)" 
-    [style.color]='_groupIndex===1?"rgb(165, 0, 190)":
-     _groupIndex===2?"rgb(0, 80, 220)":"green"'>
+    [style.color]='_groupIndex===0?"rgb(165, 0, 190)":
+     _groupIndex===1?"rgb(0, 80, 220)":"green"'>
     <tr>
       <th>
         Nazwa
