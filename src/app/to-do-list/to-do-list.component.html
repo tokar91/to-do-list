@@ -10,12 +10,12 @@
   <div class='form-field-wrapper'>
     <mat-form-field  appearance="fill">
       <mat-label for='cols'>Kolumny</mat-label>
-        <mat-select #selectCols id='cols' [(ngModel)]='displayedCols'
-          (selectionChange)='applyLayout(+selectCols.value)'>
-          <mat-option [value]='-1'  >auto</mat-option>
-          <mat-option [value]='val'  
-              *ngFor='let val of [1,2,3]'>{{val}}</mat-option>
-        </mat-select>
+      <mat-select #selectCols id='cols' [(ngModel)]='displayedCols'
+        (selectionChange)='applyLayout(+selectCols.value)'>
+        <mat-option [value]='-1'  >auto</mat-option>
+        <mat-option [value]='val'  
+            *ngFor='let val of [1,2,3]'>{{val}}</mat-option>
+      </mat-select>
     </mat-form-field>
     <mat-form-field  appearance="fill">
       <mat-label for='amount'>Wiersze</mat-label>
@@ -44,13 +44,13 @@
 </div>
 
 <div cdkDropListGroup class='task-groups'>
-  <app-task-group [style.display]='active.oncoming?"block":"none"'
+  <app-task-group *ngIf='active.oncoming'
       [group]='"oncoming"' [params]='params' (secureUrl)='secureUrl=true'>
   </app-task-group>
-  <app-task-group [style.display]='active.pending?"block":"none"'
+  <app-task-group *ngIf='active.pending'
       [group]='"pending"' [params]='params' (secureUrl)='secureUrl=true'>
     </app-task-group>
-  <app-task-group [style.display]='active.completed?"block":"none"'
+  <app-task-group *ngIf='active.completed'
       [group]='"completed"' [params]='params' (secureUrl)='secureUrl=true'>
   </app-task-group>
 </div>

@@ -170,7 +170,7 @@ export class TasksService {
     .then(()=>{this.getTasks(group,undefined,undefined,undefined,'update')});
   }
 
-  transferTask(group: string, taskObj: TaskObj): void{
+  transferTask(group: string, taskObj: TaskObj):void {
     let oldStatus: string = taskObj.data.status;
     switch(group){
       case 'oncoming'  : taskObj.data.status = 'do zrobienia'; break;

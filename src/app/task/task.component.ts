@@ -1,13 +1,20 @@
-import { Component, OnInit, Input, Output, EventEmitter} from '@angular/core';
+import { Component, Input, Output, EventEmitter} from '@angular/core';
 import { TaskObj } from '../task-obj';
 import { TasksService } from '../tasks.service';
+import { trigger, state, style, transition, animate} from '@angular/animations';
 
 @Component({
   selector: 'app-task',
   templateUrl: './task.component.html',
-  styleUrls: ['./task.component.css']
+  styleUrls: ['./task.component.css'],
+  animations: [
+    trigger('fade', [
+      state('in', style({opacity: 1})),
+      transition(':enter', [style({opacity: 0}), animate(600)])
+    ])
+  ]
 })
-export class TaskComponent implements OnInit {
+export class TaskComponent {
   
   mode: 'read'|'write';
   dateOff: boolean = true;
@@ -31,13 +38,10 @@ export class TaskComponent implements OnInit {
   @Output() saveEditedRef: EventEmitter<TaskObj> = 
               new EventEmitter();
   @Output() deleteEditedRef: EventEmitter<string|null> = new EventEmitter();
-  
+
   
   constructor(private tasksService: TasksService) { }
 
-  ngOnInit() {
-  }
-  
   closeWin(){
     this.close.emit();
   }

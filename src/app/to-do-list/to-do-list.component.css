@@ -3,23 +3,26 @@
 }
 
 .top-bar { 
-  height: 60px;
+  height: 50px;
   margin: 3px;
 }
 .top-bar .add-button {
-   font-size: 25px;
+   font-size: 24px !important;
+   text-align: center;
+   padding: 5px;
+   line-height: 40px;
    height: 100%;
    width: 250px;
    max-width: 40%;
 }
 @media screen and (max-width:600px){
     .top-bar .add-button {
-        font-size: 15px;
+        font-size: 20px !important;;
     }
 }
 @media screen and (max-width:450px){
     .top-bar .add-button {
-        font-size: 12px;
+        font-size: 16px !important;;
     }
 }
 .top-bar .form-field-wrapper {
@@ -27,32 +30,36 @@
     height: 100%;
     width: 160px;
     max-width: 40%;
+    font-size: 14px;
 }
 .top-bar mat-form-field {
     width: 50%;
 }
 
-
 .navButtons {
     display: flex;
-    height: 40px;
+    height: 45px;
     margin-top: 10px;
 }
 .navButtons>button {
     flex-grow: 1;
     flex-basis: 80px;
     margin: 3px;
+    font-size: 18px !important;
+    font-variant: small-caps;
+    font-family: Georgia, 'Times New Roman', Times, serif;
+    text-decoration: underline;
+    font-weight: bold;
+    text-shadow: 0 0 2px white;
     outline: none;
     user-select: none;
     cursor: pointer;
 }
 .oncomingBtn {
     color: rgb(165, 0, 190);
-    font-weight: bold;
 }
 .pendingBtn {
     color: rgb(0, 80, 220);
-    font-weight: bold;
 }
 .completedBtn {
     color: green;

@@ -3,7 +3,7 @@ import { Component, OnInit, Input, Output, EventEmitter}
 import { TaskObj } from '../task-obj';
 import { TasksService } from '../tasks.service';
 import { Router } from '@angular/router';
-import {CdkDragDrop} from '@angular/cdk/drag-drop';
+import {CdkDragDrop, transferArrayItem} from '@angular/cdk/drag-drop';
 
 
 @Component({
@@ -133,8 +133,18 @@ export class TaskGroupComponent implements OnInit {
     if (event.previousContainer === event.container) {
       return;
     }
-    let taskObj: any = event.previousContainer.data[event.previousIndex]
-    this.tasksService.transferTask(this._group, taskObj);
+    const taskObj: any = event.previousContainer.data[event.previousIndex]
+    const taskObjCopy: any = {...taskObj};
+    taskObjCopy.data = {...taskObj.data};
+    transferArrayItem(event.previousContainer.data, event.container.data,
+      event.previousIndex, event.currentIndex);
+    this.tasksService.transferTask(this._group, taskObjCopy);
+    const container:HTMLElement =  event.container.element.nativeElement;
+    container.style.animation = null;
+    container.offsetWidth;
+    container.style.animation = 'update 0.5s 0.2s linear';
+    event.previousContainer.data = null;
+
   }
 
 }
