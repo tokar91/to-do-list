@@ -44,13 +44,13 @@
 </div>
 
 <div cdkDropListGroup class='task-groups'>
-  <app-task-group *ngIf='active.oncoming'
+  <app-task-group [style.display]='active.oncoming?"block":"none"'
       [group]='"oncoming"' [params]='params' (secureUrl)='secureUrl=true'>
   </app-task-group>
-  <app-task-group *ngIf='active.pending'
+  <app-task-group [style.display]='active.pending?"block":"none"'
       [group]='"pending"' [params]='params' (secureUrl)='secureUrl=true'>
     </app-task-group>
-  <app-task-group *ngIf='active.completed'
+  <app-task-group [style.display]='active.completed?"block":"none"'
       [group]='"completed"' [params]='params' (secureUrl)='secureUrl=true'>
   </app-task-group>
 </div>

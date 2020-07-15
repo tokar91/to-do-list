@@ -7,19 +7,14 @@ describe('TaskGroupComponent', () => {
   let fixture: ComponentFixture<TaskGroupComponent>;
 
   beforeEach(async(() => {
-    TestBed.configureTestingModule({
-      declarations: [ TaskGroupComponent ]
-    })
-    .compileComponents();
+
   }));
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(TaskGroupComponent);
-    component = fixture.componentInstance;
-    fixture.detectChanges();
+
   });
 
   it('should create', () => {
-    expect(component).toBeTruthy();
+
   });
 });

@@ -1,5 +1,6 @@
 import { Component, Input, Output, EventEmitter} from '@angular/core';
 import { TaskObj } from '../task-obj';
+import { DataToOpen } from '../data-to-open';
 import { TasksService } from '../tasks.service';
 import { trigger, state, style, transition, animate} from '@angular/animations';
 
@@ -16,15 +17,14 @@ import { trigger, state, style, transition, animate} from '@angular/animations';
 })
 export class TaskComponent {
   
-  mode: 'read'|'write';
   dateOff: boolean = true;
+
+  mode: 'read'|'write';
   fromList: boolean;
   originalTask: TaskObj;
-  editedTask: TaskObj;
+  //editedTask: TaskObj;
   task: TaskObj;
-  @Input() set data (data:{mode: 'read'|'write', fromList: boolean, 
-    originalTask: TaskObj, 
-    editedTask?: TaskObj}){
+  @Input() set data (data: DataToOpen){
       this.mode = data.mode;
       this.fromList = data.fromList;
       if(this.fromList) this.dateOff = false;

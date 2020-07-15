@@ -1,6 +1,6 @@
 <div class='container'>
-  <table cdkDropList [cdkDropListData]='this.tasks' 
-    (cdkDropListDropped)="drop($event)" 
+  <table cdkDropList [cdkDropListData]='this._tasks' 
+    (cdkDropListDropped)="drop($event)" [@update]='this.updateAnim'
     [style.color]='_groupIndex===0?"rgb(165, 0, 190)":
      _groupIndex===1?"rgb(0, 80, 220)":"green"'>
     <tr>
@@ -32,7 +32,7 @@
         </button>
       </th>
     </tr>
-    <tr *ngFor='let task of tasks'
+    <tr *ngFor='let task of _tasks'
         (click)='openTask(task)' cdkDrag>
       <td>{{task.data.name}}</td>
       <td>{{task.data.date?task.data.date.replace('T', ' '):'brak daty'}}</td>

@@ -1,15 +1,23 @@
 import { Component, OnInit, Input, Output, EventEmitter} 
   from '@angular/core';
 import { TaskObj } from '../task-obj';
+import { DataToOpen } from '../data-to-open';
 import { TasksService } from '../tasks.service';
 import { Router } from '@angular/router';
 import {CdkDragDrop, transferArrayItem} from '@angular/cdk/drag-drop';
-
+import { trigger, state, style, transition, animate} from '@angular/animations';
 
 @Component({
   selector: 'app-task-group',
   templateUrl: './task-group.component.html',
-  styleUrls: ['./task-group.component.css']
+  styleUrls: ['./task-group.component.css'],
+  animations: [
+    trigger('update', [
+      state('idle', style({backgroundPosition: '0% -60vh'})),
+      state('run', style({backgroundPosition: '0% 100vh'})),
+      transition('idle => run', [animate(1000)])
+    ])
+  ]
 })
 export class TaskGroupComponent implements OnInit {
 
@@ -52,15 +60,20 @@ export class TaskGroupComponent implements OnInit {
       }
     }
   }
-  tasks: TaskObj[];
+  _tasks: TaskObj[];
+  set tasks(tasks: TaskObj[]){
+    this._tasks = tasks;
+    this.runUpdateAnim();
+  };
   editedTasks: {[key:string]:TaskObj} = {};
-  dataToOpen: {mode: 'read'|'write', fromList: boolean, 
-         originalTask: TaskObj, editedTask?: TaskObj}
+  dataToOpen: DataToOpen;
    
   noPrevPage: boolean;
   noNextPage: boolean;
   
   switchDir: 'dateAsc'|'dateDesc'|'priorAsc'|'priorDesc';
+
+  updateAnim: 'idle'|'run' = 'idle';
 
   @Output() secureUrl: EventEmitter<any> = new EventEmitter();
 
@@ -139,12 +152,11 @@ export class TaskGroupComponent implements OnInit {
     transferArrayItem(event.previousContainer.data, event.container.data,
       event.previousIndex, event.currentIndex);
     this.tasksService.transferTask(this._group, taskObjCopy);
-    const container:HTMLElement =  event.container.element.nativeElement;
-    container.style.animation = null;
-    container.offsetWidth;
-    container.style.animation = 'update 0.5s 0.2s linear';
-    event.previousContainer.data = null;
-
+  }
+  
+  private runUpdateAnim(): void {
+    this.updateAnim = 'run';
+    setTimeout(()=>this.updateAnim='idle', 1000);
   }
 
 }

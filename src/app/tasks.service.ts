@@ -84,6 +84,10 @@ export class TasksService {
       (snapshot) => {
         let taskObjArr:any;
         if(snapshot.empty){
+          if(action === 'update'){
+            this.getTasks(group);
+            return;
+          }
           console.log('There are no documents');
           taskObjArr = [];
           this.noPrevPageIn.next(group+'1');
@@ -95,7 +99,8 @@ export class TasksService {
         if(action){
           if(action === 'prev'){
             if(snapshot.size < amount){
-              console.log(snapshot.size, orderBy, dir, amount, action);
+              this.noPrevPageIn.next(group+'1');
+              this.noNextPageIn.next(group+'0');
               this.getTasks(group);
               console.log('Found less than demanded amount and refreshed');
               return;
